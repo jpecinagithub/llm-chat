@@ -61,12 +61,34 @@ body {
   gap: 10px;
 }
 
-.brand-dot {
-  width: 12px;
-  height: 12px;
+.brand-avatar {
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 2px solid var(--border);
   border-radius: 50%;
-  background: #16a34a;
-  box-shadow: 0 0 0 4px rgba(22, 163, 74, 0.15);
+  overflow: hidden;
+  cursor: pointer;
+  background: var(--surface);
+  flex-shrink: 0;
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+
+.brand-avatar:hover {
+  transform: scale(1.06);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.14);
+}
+
+.brand-avatar:focus-visible {
+  outline: 2px solid var(--accent);
+  outline-offset: 2px;
+}
+
+.brand-avatar img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .brand h1 {
@@ -420,6 +442,21 @@ input:focus-visible {
 
 .modal-body section:first-child h3 {
   margin-top: 14px;
+}
+
+.author-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+}
+
+.author-photo {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid var(--border);
+  flex-shrink: 0;
 }
 
 .author-name {

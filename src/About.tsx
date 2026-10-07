@@ -44,20 +44,31 @@ export default function About({ lang, onClose }: { lang: Lang; onClose: () => vo
         <div className="modal-body">
           <section aria-labelledby="about-author">
             <h3 id="about-author">{t.authorTitle}</h3>
-            <p className="author-name">
-              {t.authorName} <span className="author-role">— {t.authorRole}</span>
-            </p>
-            <p className="author-links">
-              <a href={`mailto:${t.authorEmail}`}>{t.authorEmail}</a>
-              <span aria-hidden="true"> · </span>
-              <a
-                href={`https://${t.authorGithub}`}
-                target="_blank"
-                rel="noreferrer"
-              >
-                {t.authorGithub}
-              </a>
-            </p>
+            <div className="author-card">
+              <img
+                className="author-photo"
+                src="/author.jpg"
+                alt={t.authorPhotoAlt}
+                width={64}
+                height={64}
+              />
+              <div>
+                <p className="author-name">
+                  {t.authorName} <span className="author-role">— {t.authorRole}</span>
+                </p>
+                <p className="author-links">
+                  <a href={`mailto:${t.authorEmail}`}>{t.authorEmail}</a>
+                  <span aria-hidden="true"> · </span>
+                  <a
+                    href={`https://${t.authorGithub}`}
+                    target="_blank"
+                    rel="noreferrer"
+                  >
+                    {t.authorGithub}
+                  </a>
+                </p>
+              </div>
+            </div>
           </section>
           <section aria-labelledby="about-hosting">
             <h3 id="about-hosting">{t.hostingTitle}</h3>

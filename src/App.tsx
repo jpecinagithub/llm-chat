@@ -212,7 +212,15 @@ export default function App() {
     <div className="app">
       <header className="topbar">
         <div className="brand">
-          <span className="brand-dot" aria-hidden="true" />
+          <button
+            type="button"
+            className="brand-avatar"
+            onClick={() => setAboutOpen(true)}
+            title={t.about}
+            aria-label={t.about}
+          >
+            <img src="/author.jpg" alt={t.authorPhotoAlt} width={34} height={34} />
+          </button>
           <div>
             <h1>{t.title}</h1>
             <p>{t.subtitle}</p>

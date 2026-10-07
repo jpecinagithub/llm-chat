@@ -30,6 +30,7 @@ export interface Strings {
   authorRole: string;
   authorEmail: string;
   authorGithub: string;
+  authorPhotoAlt: string;
   hostingTitle: string;
   hostingIntro: string;
   hostingSteps: HostingStep[];
@@ -63,6 +64,7 @@ export const STRINGS: Record<Lang, Strings> = {
     authorRole: 'AI Engineer',
     authorEmail: 'jpecina@gmail.com',
     authorGithub: 'github.com/jpecinagithub',
+    authorPhotoAlt: 'Photo of Jon Peciña',
     hostingTitle: 'How this is hosted',
     hostingIntro:
       "This chatbot talks to a model running on Jon's own server — no third-party AI API involved. Here is the setup, step by step.",
@@ -120,6 +122,7 @@ export const STRINGS: Record<Lang, Strings> = {
     authorRole: 'AI Engineer',
     authorEmail: 'jpecina@gmail.com',
     authorGithub: 'github.com/jpecinagithub',
+    authorPhotoAlt: 'Foto de Jon Peciña',
     hostingTitle: 'Cómo está montado',
     hostingIntro:
       'Este chatbot habla con un modelo que corre en el propio servidor de Jon — sin APIs de IA de terceros. Así está montado, paso a paso.',
