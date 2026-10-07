@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { STRINGS, type Lang } from './i18n';
+import { consumeSseStream } from './sse';
 import type { ChatMessage } from './types';
 
 const LS_MESSAGES = 'llm-chat:messages:v1';
@@ -47,6 +48,7 @@ export default function App() {
   const [messages, setMessages] = useState<ChatMessage[]>(loadMessages);
   const [draft, setDraft] = useState('');
   const [waiting, setWaiting] = useState(false);
+  const [streamed, setStreamed] = useState(false); // first token arrived
   const [error, setError] = useState<ChatError | null>(null);
   const listRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
@@ -81,12 +83,17 @@ export default function App() {
     if (!text || waitingRef.current) return;
     waitingRef.current = true;
     setWaiting(true);
+    setStreamed(false);
     setError(null);
     setDraft('');
 
     const userMsg: ChatMessage = { id: uid(), role: 'user', content: text, ts: Date.now() };
     const history = [...messages, userMsg];
     setMessages(history);
+
+    // Placeholder for the assistant reply; tokens are appended as they stream in.
+    const assistantId = uid();
+    let firstTokenSeen = false;
 
     try {
       const apiMessages = [
@@ -108,6 +115,7 @@ export default function App() {
           messages: apiMessages,
           max_tokens: 1024,
           temperature: 0.7,
+          stream: true,
         }),
       });
       if (!res.ok) {
@@ -124,20 +132,52 @@ export default function App() {
         }
         throw { kind: 'http', status: res.status, detail } as ChatError;
       }
-      const data = (await res.json()) as {
-        choices?: { message?: { content?: string; reasoning_content?: string } }[];
+
+      const contentType = res.headers.get('content-type') ?? '';
+      if (!contentType.includes('text/event-stream') || !res.body) {
+        // Fallback: the backend answered with a complete JSON body (non-streaming).
+        const data = (await res.json()) as {
+          choices?: { message?: { content?: string; reasoning_content?: string } }[];
+        };
+        const content =
+          data.choices?.[0]?.message?.content ??
+          data.choices?.[0]?.message?.reasoning_content ??
+          '';
+        setMessages((prev) => [
+          ...prev,
+          {
+            id: assistantId,
+            role: 'assistant',
+            content: content.trim() || '…',
+            ts: Date.now(),
+          },
+        ]);
+        return;
+      }
+
+      // Streaming path: show the bubble immediately and append tokens live.
+      setMessages((prev) => [
+        ...prev,
+        { id: assistantId, role: 'assistant', content: '', ts: Date.now() },
+      ]);
+      const appendToken = (token: string) => {
+        if (!firstTokenSeen) {
+          firstTokenSeen = true;
+          setStreamed(true);
+        }
+        setMessages((prev) =>
+          prev.map((m) =>
+            m.id === assistantId ? { ...m, content: m.content + token } : m,
+          ),
+        );
       };
-      const content =
-        data.choices?.[0]?.message?.content ??
-        data.choices?.[0]?.message?.reasoning_content ??
-        '';
-      const assistantMsg: ChatMessage = {
-        id: uid(),
-        role: 'assistant',
-        content: content.trim() || '…',
-        ts: Date.now(),
-      };
-      setMessages((prev) => [...prev, assistantMsg]);
+      await consumeSseStream(res, appendToken);
+      // If the stream ended with no content at all, show a placeholder.
+      setMessages((prev) =>
+        prev.map((m) =>
+          m.id === assistantId && !m.content.trim() ? { ...m, content: '…' } : m,
+        ),
+      );
     } catch (e) {
       if (e && typeof e === 'object' && 'kind' in e) {
         setError(e as ChatError);
@@ -221,7 +261,7 @@ export default function App() {
             <div className="bubble">{m.content}</div>
           </div>
         ))}
-        {waiting && (
+        {waiting && !streamed && (
           <div className="msg assistant">
             <div className="bubble thinking" aria-label={t.thinking}>
               <span className="dot" />

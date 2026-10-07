@@ -31,10 +31,12 @@ export default async function handler(req, res) {
   }
 
   // Basic sanity limits (this is a personal demo, not a public API)
+  const wantStream = body.stream === true;
   const safeBody = {
     messages: body.messages.slice(-30),
     max_tokens: Math.min(Number(body.max_tokens) || 1024, 2048),
     temperature: Math.min(Math.max(Number(body.temperature) || 0.7, 0), 2),
+    ...(wantStream ? { stream: true } : {}),
   };
 
   try {
@@ -46,6 +48,25 @@ export default async function handler(req, res) {
       },
       body: JSON.stringify(safeBody),
     });
+
+    if (wantStream && upstream.ok && upstream.body) {
+      // Pipe SSE tokens straight through — do NOT buffer the whole body.
+      res.writeHead(upstream.status, {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        Connection: 'keep-alive',
+        'X-Accel-Buffering': 'no',
+      });
+      try {
+        for await (const chunk of upstream.body) {
+          res.write(chunk);
+        }
+      } finally {
+        res.end();
+      }
+      return;
+    }
+
     const text = await upstream.text();
     res.setHeader('Content-Type', 'application/json');
     return res.status(upstream.status).send(text);

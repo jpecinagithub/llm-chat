@@ -27,8 +27,11 @@ browser ──POST /api/chat──▶ Vercel function ──POST /v1/chat/comple
 - The gateway appends `/no_think` to user messages by default for fast answers.
   The **Thinking mode** toggle in the UI appends `/think` instead, letting Qwen3
   reason before answering (slower).
-- Non-streaming in v1 (the gateway doesn't stream yet): the UI shows a
-  "Thinking…" indicator while waiting.
+- **Streaming**: the UI sends `stream: true`; the gateway pipes llama.cpp's SSE
+  tokens through `api/chat.js` and the UI renders them word-by-word. The
+  "Thinking…" indicator shows only until the first token arrives. If the
+  backend answers with plain JSON instead of SSE, the UI falls back to the
+  non-streaming path.
 
 ## Environment variables
 
@@ -77,8 +80,9 @@ Notes:
 ## Project structure
 
 ```
-api/chat.js        # Vercel serverless function (token injection + forwarding)
+api/chat.js        # Vercel serverless function (token injection + forwarding, SSE passthrough)
 src/App.tsx        # chat UI
+src/sse.ts         # SSE stream consumer (data: lines -> tokens)
 src/i18n.ts        # EN/ES strings
 src/types.ts       # message types
 public/            # PWA icons + manifest assets

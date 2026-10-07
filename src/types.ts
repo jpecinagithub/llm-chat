@@ -9,4 +9,5 @@ export interface ChatRequestBody {
   messages: { role: 'system' | 'user' | 'assistant'; content: string }[];
   max_tokens?: number;
   temperature?: number;
+  stream?: boolean;
 }
