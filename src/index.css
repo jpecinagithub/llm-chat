@@ -377,6 +377,14 @@ input:focus-visible {
   }
   .topbar {
     padding: 10px 12px;
+    gap: 8px 12px;
+  }
+  /* Let the controls take the full row so they wrap gracefully
+     instead of overflowing the viewport on narrow screens
+     (labels are longer in Spanish: "Modo razonamiento", "Acerca de"). */
+  .controls {
+    flex: 1 1 100%;
+    gap: 8px 10px;
   }
   .chat {
     padding: 14px 12px;
