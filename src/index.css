@@ -360,3 +360,124 @@ input:focus-visible {
     padding: 14px 12px;
   }
 }
+
+/* ---------- about modal ---------- */
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 23, 42, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  z-index: 50;
+}
+
+.modal {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  max-width: 640px;
+  width: 100%;
+  max-height: 85dvh;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 24px 64px rgba(15, 23, 42, 0.25);
+}
+
+.modal-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 16px 20px;
+  border-bottom: 1px solid var(--border);
+  flex: none;
+}
+
+.modal-head h2 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 650;
+  letter-spacing: -0.01em;
+}
+
+.modal-body {
+  padding: 4px 20px 24px;
+  overflow-y: auto;
+  font-size: 14.5px;
+  line-height: 1.6;
+}
+
+.modal-body h3 {
+  font-size: 12px;
+  font-weight: 650;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+  color: var(--muted);
+  margin: 20px 0 8px;
+}
+
+.modal-body section:first-child h3 {
+  margin-top: 14px;
+}
+
+.author-name {
+  font-size: 16px;
+  font-weight: 650;
+  margin: 0 0 4px;
+}
+
+.author-role {
+  font-weight: 500;
+  color: var(--muted);
+}
+
+.author-links {
+  margin: 0;
+}
+
+.author-links a {
+  color: var(--accent);
+}
+
+.steps {
+  margin: 10px 0 0;
+  padding-left: 22px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.steps li::marker {
+  font-weight: 650;
+  color: var(--accent);
+}
+
+.steps strong {
+  display: block;
+  margin-bottom: 2px;
+}
+
+.steps p {
+  margin: 0;
+}
+
+.modal-body code {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12.5px;
+  background: var(--accent-soft);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 1px 6px;
+  overflow-wrap: anywhere;
+}
+
+@media (max-width: 560px) {
+  .modal-backdrop {
+    padding: 12px;
+  }
+  .modal-body {
+    padding-inline: 16px;
+  }
+}

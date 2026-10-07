@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { STRINGS, type Lang } from './i18n';
+import About from './About';
 import { consumeSseStream } from './sse';
 import type { ChatMessage } from './types';
 
@@ -50,6 +51,7 @@ export default function App() {
   const [waiting, setWaiting] = useState(false);
   const [streamed, setStreamed] = useState(false); // first token arrived
   const [error, setError] = useState<ChatError | null>(null);
+  const [aboutOpen, setAboutOpen] = useState(false);
   const listRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const waitingRef = useRef(false);
@@ -238,6 +240,9 @@ export default function App() {
               </button>
             ))}
           </div>
+          <button type="button" className="ghost-btn" onClick={() => setAboutOpen(true)}>
+            {t.about}
+          </button>
           <button type="button" className="ghost-btn" onClick={clearChat}>
             {t.clear}
           </button>
@@ -306,6 +311,8 @@ export default function App() {
         </div>
         <p className="foot">{t.footer}</p>
       </footer>
+
+      {aboutOpen && <About lang={lang} onClose={() => setAboutOpen(false)} />}
     </div>
   );
 }
